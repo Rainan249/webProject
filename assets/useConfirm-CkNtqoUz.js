@@ -1,0 +1,1 @@
+import{F as e}from"./index-PjbrA28m.js";var t=e(!1),n=e(``),r=e(``),i=null;function a(){function e(e,a){return n.value=e,r.value=a,t.value=!0,new Promise(e=>{i=e})}function a(){t.value=!1,i?.(!0),i=null}function o(){t.value=!1,i?.(!1),i=null}return{isVisible:t,title:n,message:r,show:e,confirm:a,cancel:o}}export{a as t};

@@ -1,0 +1,1 @@
+import{F as e}from"./index-PjbrA28m.js";var t=e([]),n=0;function r(){function e(e,r=`success`,i=2500){let a=++n;t.value.push({id:a,message:e,type:r}),setTimeout(()=>{t.value=t.value.filter(e=>e.id!==a)},i+300)}return{toasts:t,show:e}}export{r as t};

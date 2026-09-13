@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>菲林日记</title>
+    <script>
+      // 在首屏绘制前定好主题，否则会先闪一帧浅色再跳深色。
+      // 取值规则与 src/stores/theme.js 保持一致。
+      (function () {
+        try {
+          var saved = localStorage.getItem('theme')
+          if (saved !== 'light' && saved !== 'dark') {
+            saved = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+          }
+          document.documentElement.setAttribute('data-theme', saved)
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light')
+        }
+      })()
+    </script>
+    <script type="module" crossorigin src="./assets/index-PjbrA28m.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-DNua-CV8.css">
+  </head>
+  <body>
+    <div id="app"></div>
+  </body>
+</html>
