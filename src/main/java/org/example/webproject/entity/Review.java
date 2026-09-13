@@ -12,6 +12,7 @@ public class Review {
     private String releaseDate;
     private Integer userRating;
     private String content;
+    private String username;
     private String createdAt;
     private String updatedAt;
 }

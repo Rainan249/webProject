@@ -95,8 +95,8 @@ async function submit() {
 </script>
 
 <style scoped>
-.modal-movie-info { display: flex; gap: 16px; padding: 16px; background: rgba(255,255,255,0.6); border-radius: 12px; border: 1px solid rgba(0,0,0,0.04); margin-bottom: 24px; }
-.modal-movie-poster { width: 85px; height: 120px; border-radius: 10px; overflow: hidden; flex-shrink: 0; background: linear-gradient(135deg, #e8e4e0, #d8d4d0); }
+.modal-movie-info { display: flex; gap: 16px; padding: 16px; background: var(--frost); border-radius: 12px; border: 1px solid var(--frost-border); margin-bottom: 24px; }
+.modal-movie-poster { width: 85px; height: 120px; border-radius: 10px; overflow: hidden; flex-shrink: 0; background: linear-gradient(135deg, var(--bleed-a), var(--bleed-b)); }
 .modal-movie-poster img { width: 100%; height: 100%; object-fit: cover; }
 .modal-movie-details { flex: 1; display: flex; flex-direction: column; justify-content: center; }
 .modal-movie-title { font-family: var(--font-display); font-size: 18px; font-weight: 600; margin-bottom: 8px; }

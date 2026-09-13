@@ -46,7 +46,7 @@ const imgBase = 'https://image.tmdb.org/t/p/'
   width: 100%;
   aspect-ratio: 1 / 1;
   overflow: hidden;
-  background: linear-gradient(135deg, #e8e4e0 0%, #d8d4d0 100%);
+  background: linear-gradient(135deg, var(--bleed-a) 0%, var(--bleed-b) 100%);
 }
 .record-poster img {
   width: 100%;
@@ -95,12 +95,12 @@ const imgBase = 'https://image.tmdb.org/t/p/'
   font-weight: 600;
 }
 .record-status.watched {
-  background: rgba(40, 167, 69, 0.1);
-  color: #28a745;
+  background: var(--success-bg);
+  color: var(--success);
 }
 .record-status.wishlist {
-  background: rgba(255, 193, 7, 0.1);
-  color: #ffc107;
+  background: var(--warning-bg);
+  color: var(--warning);
 }
 .record-actions {
   display: flex;
@@ -132,12 +132,12 @@ const imgBase = 'https://image.tmdb.org/t/p/'
   background: var(--accent-bg);
 }
 .record-btn.write:hover {
-  background: rgba(184, 134, 11, 0.15);
+  background: var(--accent-bg);
   color: var(--accent);
 }
 .record-btn.delete:hover {
-  background: rgba(220, 53, 69, 0.1);
-  border-color: rgba(220, 53, 69, 0.2);
-  color: #dc3545;
+  background: var(--danger-bg);
+  border-color: var(--danger-border);
+  color: var(--danger);
 }
 </style>

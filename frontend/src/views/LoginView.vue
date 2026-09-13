@@ -134,7 +134,7 @@ async function handleLogin() {
   right: -5%;
   width: 60vw;
   height: 60vh;
-  background: radial-gradient(ellipse, rgba(212, 168, 83, 0.15) 0%, transparent 60%);
+  background: radial-gradient(ellipse, rgba(184, 134, 11, 0.15) 0%, transparent 60%);
   animation: drift 22s ease-in-out infinite alternate;
 }
 
@@ -259,8 +259,8 @@ async function handleLogin() {
 
 .form-input:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.1);
-  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.12);
+  background: var(--input-focus-bg);
 }
 
 .form-input::placeholder { color: var(--ink-muted); }
@@ -346,8 +346,8 @@ async function handleLogin() {
 .hint-text {
   margin-top: 12px;
   padding: 14px 18px;
-  background: rgba(212, 168, 83, 0.08);
-  border: 1px dashed rgba(212, 168, 83, 0.3);
+  background: rgba(184, 134, 11, 0.08);
+  border: 1px dashed rgba(184, 134, 11, 0.3);
   border-radius: 10px;
   font-size: 15px;
   color: var(--ink-muted);
@@ -378,10 +378,10 @@ async function handleLogin() {
 .error-message {
   display: none;
   padding: 12px 16px;
-  background: rgba(220, 53, 69, 0.1);
-  border: 1px solid rgba(220, 53, 69, 0.2);
+  background: var(--danger-bg);
+  border: 1px solid var(--danger-border);
   border-radius: 10px;
-  color: #dc3545;
+  color: var(--danger);
   font-size: 14px;
   margin-bottom: 20px;
   text-align: center;

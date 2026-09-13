@@ -59,7 +59,7 @@ const stars = computed(() => {
   border-radius: 8px;
   overflow: hidden;
   flex-shrink: 0;
-  background: linear-gradient(135deg, #e8e4e0 0%, #d8d4d0 100%);
+  background: linear-gradient(135deg, var(--bleed-a) 0%, var(--bleed-b) 100%);
 }
 .review-poster img {
   width: 100%;
@@ -111,9 +111,9 @@ const stars = computed(() => {
   color: var(--ink);
 }
 .review-btn.delete:hover {
-  background: rgba(220, 53, 69, 0.1);
-  border-color: rgba(220, 53, 69, 0.2);
-  color: #dc3545;
+  background: var(--danger-bg);
+  border-color: var(--danger-border);
+  color: var(--danger);
 }
 .review-rating {
   display: flex;
@@ -122,7 +122,7 @@ const stars = computed(() => {
   margin-bottom: 12px;
 }
 .review-rating-stars {
-  color: #f59e0b;
+  color: var(--accent);
   font-size: 16px;
   letter-spacing: 2px;
 }

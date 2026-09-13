@@ -60,7 +60,7 @@ watch(() => props.movie, () => { if (props.visible) preloadNext() })
 </script>
 
 <style scoped>
-.detail-poster { flex: 0 0 260px; align-self: stretch; background: linear-gradient(135deg, #e8e4e0 0%, #d8d4d0 100%); overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.detail-poster { flex: 0 0 260px; align-self: stretch; background: linear-gradient(135deg, var(--bleed-a) 0%, var(--bleed-b) 100%); overflow: hidden; display: flex; align-items: center; justify-content: center; }
 .detail-poster img { width: 100%; height: 100%; object-fit: cover; }
 .detail-body { flex: 1; padding: 32px; display: flex; flex-direction: column; overflow-y: auto; }
 .detail-title { font-family: var(--font-display); font-size: 24px; font-weight: 700; margin-bottom: 12px; }

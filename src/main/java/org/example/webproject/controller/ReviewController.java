@@ -3,6 +3,7 @@ package org.example.webproject.controller;
 import org.example.webproject.dto.ReviewRequest;
 import org.example.webproject.entity.Review;
 import org.example.webproject.service.ReviewService;
+import org.example.webproject.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,9 +14,11 @@ import java.util.List;
 public class ReviewController {
 
     private final ReviewService reviewService;
+    private final UserService userService;
 
-    public ReviewController(ReviewService reviewService) {
+    public ReviewController(ReviewService reviewService, UserService userService) {
         this.reviewService = reviewService;
+        this.userService = userService;
     }
 
     @GetMapping
@@ -38,8 +41,10 @@ public class ReviewController {
     }
 
     @PostMapping
-    public Review add(@RequestBody ReviewRequest request) {
-        return reviewService.add(request);
+    public Review add(@RequestHeader(value = "X-Auth-Token", required = false) String token,
+                      @RequestBody ReviewRequest request) {
+        String username = userService.getUsernameByToken(token);
+        return reviewService.add(request, username);
     }
 
     @PutMapping("/{id}")

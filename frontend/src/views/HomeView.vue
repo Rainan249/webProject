@@ -12,7 +12,6 @@
       </div>
     </div>
   </header>
-
   <div class="stats-row">
     <div class="stat-card">
       <div class="stat-value">{{ stats.watched }}</div>
@@ -57,10 +56,10 @@
   </div>
 
   <div class="container-fluid px-0">
-    <div class="row g-3 movie-row">
+    <div class="row g-2 movie-row">
       <div v-for="(movie, i) in movieStore.movies" :key="movie.id"
-        class="col-6 col-md-4 col-lg-4 col-xxl-2">
-        <MovieCard :movie="movie" :delay="i * 50"
+        class="col-4 col-sm-3 col-md-2 col-lg col-xl-1-5">
+        <MovieCard :movie="movie" :delay="Math.min(i, 20) * 30"
           @detail="openDetail" @watch="handleWatch" @write="handleWrite" />
       </div>
     </div>
@@ -74,6 +73,13 @@
   <div v-if="movieStore.isLoading && movieStore.movies.length > 0" class="load-more">
     <div class="loading-spinner"></div>
     <span>加载更多...</span>
+  </div>
+
+  <!-- 兜底：未在加载且筛选/搜索未激活时，提供手动加载入口 -->
+  <div v-if="!movieStore.isLoading && movieStore.movies.length > 0
+    && !movieStore.isFiltered && !movieStore.isSearching
+    && movieStore.currentPage <= movieStore.totalPages" class="load-more-btn-wrap">
+    <button type="button" class="load-more-btn" @click="movieStore.loadNextPage()">加载更多</button>
   </div>
 
   <div v-if="!movieStore.isLoading && movieStore.movies.length > 0 && movieStore.currentPage > movieStore.totalPages" class="no-more">
@@ -295,5 +301,28 @@ useInfiniteScroll(() => movieStore.loadNextPage())
 .search-btn:hover {
   box-shadow: 0 4px 12px rgba(184, 134, 11, 0.3);
   transform: translateY(-1px);
+}
+.load-more-btn-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 24px 0 8px;
+}
+.load-more-btn {
+  padding: 12px 40px;
+  border-radius: 12px;
+  border: 1px dashed var(--accent-border);
+  background: var(--frost);
+  color: var(--ink-secondary);
+  font-size: 15px;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.load-more-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-bg);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(184, 134, 11, 0.12);
 }
 </style>

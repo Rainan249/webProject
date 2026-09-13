@@ -7,11 +7,16 @@
       </div>
       <div class="discover-info" ref="infoEl">
         <div class="discover-actions">
-          <button class="discover-btn discover-btn-primary" @click="handleWatch">☆</button>
+          <button class="discover-btn discover-btn-primary" :class="{ added: currentStatus }"
+            :disabled="currentStatus === 'watched'"
+            :title="currentStatus === 'watched' ? '已看过' : currentStatus === 'wishlist' ? '已在想看列表' : '加入想看'"
+            @click="handleWatch">{{ currentStatus === 'watched' ? '✓' : currentStatus === 'wishlist' ? '☆' : '☆' }}</button>
           <button class="discover-btn discover-btn-secondary" @click="handleWrite">✎</button>
           <button class="discover-btn discover-btn-refresh" @click="switchToNext">→</button>
         </div>
-        <div class="discover-badge">随机推荐</div>
+        <div class="discover-badge">
+          {{ currentStatus === 'watched' ? '已看过 ✓' : currentStatus === 'wishlist' ? '已在想看列表 ☆' : '随机推荐' }}
+        </div>
         <h1 class="discover-title">{{ currentMovie?.title }}</h1>
         <div class="discover-meta">
           <span class="discover-rating">{{ currentMovie?.vote_average?.toFixed(1) }}</span>
@@ -31,9 +36,10 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useMovieStore } from '@/stores/movies'
 import { useToast } from '@/composables/useToast'
+import { apiFetch } from '@/utils/api'
 import ReviewFormModal from '@/components/review/ReviewFormModal.vue'
 
 const movieStore = useMovieStore()
@@ -54,6 +60,8 @@ const posterEl = ref(null)
 const infoEl = ref(null)
 const reviewVisible = ref(false)
 const reviewMovie = ref(null)
+/** 当前推荐片的记录状态：null=未添加 / 'wishlist' / 'watched' */
+const currentStatus = ref(null)
 
 const genreText = computed(() => {
   if (!currentMovie.value?.genre_ids) return ''
@@ -189,9 +197,24 @@ function switchToNext() {
   loadRandomMovie(true)
 }
 
+/** 查询当前影片的记录状态（未登录/后端未启动时静默跳过） */
+async function fetchStatus() {
+  currentStatus.value = null
+  const id = currentMovie.value?.id
+  if (!id) return
+  try {
+    const res = await apiFetch(`/api/records/movie/${parseInt(id)}`)
+    if (res.ok) {
+      const record = await res.json()
+      currentStatus.value = record?.status || null
+    }
+  } catch { /* ignore */ }
+}
+
 function handleWatch() {
-  if (!currentMovie.value) return
+  if (!currentMovie.value || currentStatus.value) return
   movieStore.addToWatchlist(currentMovie.value)
+  currentStatus.value = 'wishlist'
   toastShow('已添加到想看列表')
 }
 
@@ -201,5 +224,22 @@ function handleWrite() {
   reviewVisible.value = true
 }
 
+// 每次切换推荐片后查询该片的记录状态
+watch(currentMovie, () => fetchStatus())
+
 onMounted(() => loadRandomMovie(false))
 </script>
+
+<style scoped>
+.discover-btn-primary.added {
+  background: var(--accent-bg);
+  border: 2px solid var(--accent-border);
+  color: var(--accent);
+  box-shadow: none;
+}
+.discover-btn-primary:disabled {
+  cursor: not-allowed;
+  opacity: 0.85;
+  transform: none;
+}
+</style>

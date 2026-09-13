@@ -105,6 +105,51 @@ public class UserService {
         if (token != null) sessions.remove(token);
     }
 
+    /** 获取 Token 对应的用户名 */
+    public String getUsernameByToken(String token) {
+        return sessions.get(token);
+    }
+
+    /**
+     * 修改密码：校验旧密码 → PBKDF2 存新密码 → 注销该用户所有旧会话（要求重新登录）。
+     * @return null=成功；否则为错误信息
+     */
+    public String changePassword(String token, String oldPassword, String newPassword) {
+        String username = getUsernameByToken(token);
+        if (username == null) return "会话已过期，请重新登录";
+        if (newPassword == null || newPassword.trim().length() < 6) {
+            return "新密码长度至少 6 位";
+        }
+        if (newPassword.equals(oldPassword)) return "新密码不能与旧密码相同";
+
+        try (Connection conn = DriverManager.getConnection(dbUrl);
+             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM users WHERE username = ?")) {
+            stmt.setString(1, username);
+            ResultSet rs = stmt.executeQuery();
+            if (!rs.next()) return "用户不存在";
+
+            long userId = rs.getLong("id");
+            String stored = rs.getString("password");
+            if (!verifyAndUpgrade(conn, userId, stored, oldPassword == null ? "" : oldPassword.trim())) {
+                return "旧密码错误";
+            }
+
+            try (PreparedStatement up = conn.prepareStatement(
+                    "UPDATE users SET password = ? WHERE id = ?")) {
+                up.setString(1, hashPbkdf2(newPassword.trim()));
+                up.setLong(2, userId);
+                up.executeUpdate();
+            }
+            // 密码已变更：注销该用户全部旧会话
+            sessions.values().removeIf(u -> u.equals(username));
+            log.info("用户 {} 修改密码成功，已注销其全部会话", username);
+            return null;
+        } catch (SQLException e) {
+            log.error("修改密码失败", e);
+            return "系统错误，请稍后重试";
+        }
+    }
+
     /** 校验密码；若库里仍是存量明文且密码正确，则原地升级为 PBKDF2 哈希 */
     private boolean verifyAndUpgrade(Connection conn, long userId, String stored, String password) {
         try {

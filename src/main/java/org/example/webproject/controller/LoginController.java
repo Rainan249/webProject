@@ -26,4 +26,17 @@ public class LoginController {
         userService.logout(token);
         return java.util.Map.of("success", true, "message", "已退出登录");
     }
+
+    /** 修改密码：校验旧密码，新密码 PBKDF2 加密存储，成功后需重新登录 */
+    @PostMapping("/password")
+    public java.util.Map<String, Object> changePassword(
+            @RequestHeader(value = "X-Auth-Token", required = false) String token,
+            @RequestBody java.util.Map<String, String> body) {
+        String error = userService.changePassword(
+                token, body.get("oldPassword"), body.get("newPassword"));
+        if (error == null) {
+            return java.util.Map.of("success", true, "message", "密码修改成功，请重新登录");
+        }
+        return java.util.Map.of("success", false, "message", error);
+    }
 }

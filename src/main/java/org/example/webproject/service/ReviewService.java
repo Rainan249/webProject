@@ -37,11 +37,20 @@ public class ReviewService {
                     release_date TEXT,
                     user_rating INTEGER,
                     content TEXT,
+                    username TEXT,
                     created_at TEXT NOT NULL,
                     updated_at TEXT NOT NULL
                 )
             """;
             stmt.executeUpdate(sql);
+            // 存量表补 username 列
+            try (ResultSet col = stmt.executeQuery(
+                    "SELECT COUNT(*) FROM pragma_table_info('reviews') WHERE name = 'username'")) {
+                if (col.next() && col.getInt(1) == 0) {
+                    stmt.executeUpdate("ALTER TABLE reviews ADD COLUMN username TEXT");
+                    log.info("reviews 表已补充 username 列");
+                }
+            }
             log.info("影评表初始化完成");
         } catch (SQLException e) {
             log.error("创建影评表失败", e);
@@ -92,7 +101,7 @@ public class ReviewService {
         return null;
     }
 
-    public Review add(ReviewRequest request) {
+    public Review add(ReviewRequest request, String username) {
         String now = LocalDateTime.now().format(FORMATTER);
 
         // 检查是否已有该电影的影评
@@ -104,8 +113,8 @@ public class ReviewService {
         }
 
         String insertSql = """
-            INSERT INTO reviews (movie_id, title, poster_path, tmdb_rating, release_date, user_rating, content, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO reviews (movie_id, title, poster_path, tmdb_rating, release_date, user_rating, content, username, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """;
         try (Connection conn = DriverManager.getConnection(dbUrl);
              PreparedStatement stmt = conn.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS)) {
@@ -116,8 +125,9 @@ public class ReviewService {
             stmt.setString(5, request.getReleaseDate());
             stmt.setObject(6, request.getUserRating());
             stmt.setString(7, request.getContent());
-            stmt.setString(8, now);
+            stmt.setString(8, username);
             stmt.setString(9, now);
+            stmt.setString(10, now);
             stmt.executeUpdate();
 
             ResultSet keys = stmt.getGeneratedKeys();
@@ -128,6 +138,22 @@ public class ReviewService {
             log.error("添加影评失败", e);
         }
         return null;
+    }
+
+    /** 社区：全部影评（按更新时间倒序，带评价者） */
+    public List<Review> getCommunity() {
+        List<Review> reviews = new ArrayList<>();
+        try (Connection conn = DriverManager.getConnection(dbUrl);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(
+                 "SELECT * FROM reviews WHERE content IS NOT NULL AND content != '' ORDER BY updated_at DESC")) {
+            while (rs.next()) {
+                reviews.add(mapRow(rs));
+            }
+        } catch (SQLException e) {
+            log.error("查询社区影评失败", e);
+        }
+        return reviews;
     }
 
     public boolean update(Long id, ReviewRequest request) {
@@ -180,6 +206,7 @@ public class ReviewService {
         review.setReleaseDate(rs.getString("release_date"));
         review.setUserRating(rs.getInt("user_rating"));
         review.setContent(rs.getString("content"));
+        try { review.setUsername(rs.getString("username")); } catch (SQLException ignored) { }
         review.setCreatedAt(rs.getString("created_at"));
         review.setUpdatedAt(rs.getString("updated_at"));
         return review;

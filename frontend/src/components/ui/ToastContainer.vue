@@ -30,15 +30,15 @@ const { toasts } = useToast()
   font-size: 14px;
   font-weight: 500;
   backdrop-filter: blur(12px);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  box-shadow: var(--shadow-md);
   display: flex;
   align-items: center;
   gap: 8px;
   animation: toastIn 0.3s ease;
 }
-.toast-success { background: rgba(34,139,34,0.15); color: #228b22; border: 1px solid rgba(34,139,34,0.2); }
-.toast-error { background: rgba(220,53,69,0.15); color: #dc3545; border: 1px solid rgba(220,53,69,0.2); }
-.toast-info { background: rgba(184,134,11,0.15); color: var(--accent); border: 1px solid var(--accent-border); }
+.toast-success { background: var(--success-bg); color: var(--success); border: 1px solid var(--success-border); }
+.toast-error { background: var(--danger-bg); color: var(--danger); border: 1px solid var(--danger-border); }
+.toast-info { background: var(--accent-bg); color: var(--accent); border: 1px solid var(--accent-border); }
 .toast-enter-active { animation: toastIn 0.3s ease; }
 .toast-leave-active { animation: toastOut 0.3s ease; }
 @keyframes toastIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }

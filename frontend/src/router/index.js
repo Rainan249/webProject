@@ -15,8 +15,10 @@ const routes = [
     children: [
       { path: '', name: 'Home', component: () => import('@/views/HomeView.vue'), meta: { title: '菲林日记' } },
       { path: 'discover', name: 'Discover', component: () => import('@/views/DiscoverView.vue'), meta: { title: '发现 - 菲林日记' } },
+      { path: 'community', name: 'Community', component: () => import('@/views/CommunityView.vue'), meta: { title: '社区 - 菲林日记' } },
       { path: 'records', name: 'Records', component: () => import('@/views/RecordsView.vue'), meta: { title: '观影记录 - 菲林日记' } },
       { path: 'reviews', name: 'Reviews', component: () => import('@/views/ReviewsView.vue'), meta: { title: '我的影评 - 菲林日记' } },
+      { path: 'settings', name: 'Settings', component: () => import('@/views/SettingsView.vue'), meta: { title: '设置 - 菲林日记' } },
     ],
   },
   { path: '/:pathMatch(.*)*', redirect: '/' },
