@@ -115,8 +115,10 @@ public class WatchRecordService {
         // 检查是否已存在
         WatchRecord existing = getByMovieId(request.getMovieId());
         if (existing != null) {
-            // 如果已存在，更新状态
-            updateStatus(existing.getId(), request.getStatus());
+            // 已存在：只允许 wishlist -> watched 升级，不允许 watched 降级回 wishlist
+            if (!"watched".equals(existing.getStatus())) {
+                updateStatus(existing.getId(), request.getStatus());
+            }
             return getByMovieId(request.getMovieId());
         }
 

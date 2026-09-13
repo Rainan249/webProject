@@ -37,6 +37,7 @@ import { ref, watch } from 'vue'
 import StarRating from '@/components/ui/StarRating.vue'
 import { useToast } from '@/composables/useToast'
 import { useRecordStore } from '@/stores/records'
+import { apiFetch } from '@/utils/api'
 
 const props = defineProps({
   movie: Object,
@@ -53,7 +54,7 @@ const content = ref('')
 
 watch(() => props.visible, (v) => {
   if (v) {
-    selectedRating.value = props.review?.user_rating || 0
+    selectedRating.value = (props.review?.userRating ?? props.review?.user_rating) || 0
     content.value = props.review?.content || ''
   }
 })
@@ -71,13 +72,13 @@ async function submit() {
   }
   try {
     if (props.review) {
-      await fetch(`/api/reviews/${props.review.id}`, {
+      await apiFetch(`/api/reviews/${props.review.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userRating: selectedRating.value, content: content.value.trim() }),
       })
     } else {
-      await fetch('/api/reviews', {
+      await apiFetch('/api/reviews', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),

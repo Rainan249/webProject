@@ -2,6 +2,7 @@ package org.example.webproject.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -11,6 +12,22 @@ import java.io.IOException;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+
+    private final AuthInterceptor authInterceptor;
+
+    public WebConfig(AuthInterceptor authInterceptor) {
+        this.authInterceptor = authInterceptor;
+    }
+
+    /**
+     * 会话鉴权：记录与影评接口需要登录（请求头 X-Auth-Token）；
+     * 登录/登出、TMDB 搜索代理放行（TMDB key 本就是公开数据通道）。
+     */
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(authInterceptor)
+                .addPathPatterns("/api/records/**", "/api/reviews/**");
+    }
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {

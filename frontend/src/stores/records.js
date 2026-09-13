@@ -2,6 +2,8 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { useConfirm } from '@/composables/useConfirm'
 import { useToast } from '@/composables/useToast'
+import { useMovieStore } from '@/stores/movies'
+import { apiFetch } from '@/utils/api'
 
 export const useRecordStore = defineStore('records', () => {
   const records = ref([])
@@ -16,7 +18,7 @@ export const useRecordStore = defineStore('records', () => {
       const url = currentFilter.value === 'all'
         ? '/api/records'
         : `/api/records/status/${currentFilter.value}`
-      const res = await fetch(url)
+      const res = await apiFetch(url)
       records.value = await res.json()
     } catch (e) {
       console.error('加载记录失败:', e)
@@ -29,7 +31,11 @@ export const useRecordStore = defineStore('records', () => {
     const ok = await confirmShow('删除记录', `确定要删除「${title}」吗？<br>此操作不可恢复。`)
     if (!ok) return
     try {
-      await fetch(`/api/records/${id}`, { method: 'DELETE' })
+      await apiFetch(`/api/records/${id}`, { method: 'DELETE' })
+      // 同步首页"已添加"按钮状态
+      const movieStore = useMovieStore()
+      const rec = records.value.find(r => r.id === id)
+      if (rec) movieStore.recordMovieIds.delete(rec.movieId)
       toastShow('已删除')
       loadRecords()
     } catch (e) {
@@ -39,13 +45,13 @@ export const useRecordStore = defineStore('records', () => {
 
   async function markAsWatched(movieId) {
     try {
-      const res = await fetch(`/api/records/movie/${movieId}`)
+      const res = await apiFetch(`/api/records/movie/${movieId}`)
       if (res.ok) {
         const text = await res.text()
         if (text) {
           const record = JSON.parse(text)
           if (record && record.id && record.status === 'wishlist') {
-            await fetch(`/api/records/${record.id}/status?status=watched`, { method: 'PUT' })
+            await apiFetch(`/api/records/${record.id}/status?status=watched`, { method: 'PUT' })
           }
         }
       }

@@ -119,7 +119,7 @@ async function handleLogin() {
 }
 </style>
 
-<style>
+<style scoped>
 .login-page .atmosphere {
   position: fixed;
   inset: 0;

@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { useConfirm } from '@/composables/useConfirm'
 import { useToast } from '@/composables/useToast'
+import { apiFetch } from '@/utils/api'
 
 export const useReviewStore = defineStore('reviews', () => {
   const reviews = ref([])
@@ -12,7 +13,7 @@ export const useReviewStore = defineStore('reviews', () => {
   async function loadReviews() {
     isLoading.value = true
     try {
-      const res = await fetch('/api/reviews')
+      const res = await apiFetch('/api/reviews')
       reviews.value = await res.json()
     } catch (e) {
       console.error('加载影评失败:', e)
@@ -22,7 +23,7 @@ export const useReviewStore = defineStore('reviews', () => {
   }
 
   async function addReview(data) {
-    const res = await fetch('/api/reviews', {
+    const res = await apiFetch('/api/reviews', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
@@ -31,7 +32,7 @@ export const useReviewStore = defineStore('reviews', () => {
   }
 
   async function updateReview(id, data) {
-    await fetch(`/api/reviews/${id}`, {
+    await apiFetch(`/api/reviews/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
@@ -42,7 +43,7 @@ export const useReviewStore = defineStore('reviews', () => {
     const ok = await confirmShow('删除影评', `确定要删除「${title}」的影评吗？`)
     if (!ok) return
     try {
-      await fetch(`/api/reviews/${id}`, { method: 'DELETE' })
+      await apiFetch(`/api/reviews/${id}`, { method: 'DELETE' })
       toastShow('影评已删除')
       loadReviews()
     } catch (e) {
@@ -52,7 +53,7 @@ export const useReviewStore = defineStore('reviews', () => {
 
   async function getReviewByMovieId(movieId) {
     try {
-      const res = await fetch(`/api/reviews/movie/${movieId}`)
+      const res = await apiFetch(`/api/reviews/movie/${movieId}`)
       if (res.status === 404) return null
       return await res.json()
     } catch (e) {
@@ -62,7 +63,7 @@ export const useReviewStore = defineStore('reviews', () => {
 
   async function getStats() {
     try {
-      const res = await fetch('/api/reviews')
+      const res = await apiFetch('/api/reviews')
       const data = await res.json()
       const count = data.length
       const avgRating = count > 0

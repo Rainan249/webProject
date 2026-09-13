@@ -56,9 +56,14 @@
     </div>
   </div>
 
-  <div class="movie-grid">
-    <MovieCard v-for="(movie, i) in movieStore.movies" :key="movie.id" :movie="movie" :delay="i * 50"
-      @detail="openDetail" @watch="handleWatch" @write="handleWrite" />
+  <div class="container-fluid px-0">
+    <div class="row g-3 movie-row">
+      <div v-for="(movie, i) in movieStore.movies" :key="movie.id"
+        class="col-6 col-md-4 col-lg-4 col-xxl-2">
+        <MovieCard :movie="movie" :delay="i * 50"
+          @detail="openDetail" @watch="handleWatch" @write="handleWrite" />
+      </div>
+    </div>
   </div>
 
   <div v-if="movieStore.isLoading && movieStore.movies.length === 0" class="loading-state">
@@ -88,6 +93,7 @@ import { useMovieStore } from '@/stores/movies'
 import { useReviewStore } from '@/stores/reviews'
 import { useInfiniteScroll } from '@/composables/useInfiniteScroll'
 import { useToast } from '@/composables/useToast'
+import { apiFetch } from '@/utils/api'
 import MovieCard from '@/components/movie/MovieCard.vue'
 import MovieDetailModal from '@/components/movie/MovieDetailModal.vue'
 import ReviewFormModal from '@/components/review/ReviewFormModal.vue'
@@ -252,7 +258,7 @@ function onReviewSaved() {
 async function loadStats() {
   try {
     const [recordRes, reviewData] = await Promise.all([
-      fetch('/api/records/stats'),
+      apiFetch('/api/records/stats'),
       reviewStore.getStats(),
     ])
     const recordData = await recordRes.json()

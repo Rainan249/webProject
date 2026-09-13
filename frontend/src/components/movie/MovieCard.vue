@@ -1,5 +1,5 @@
 <template>
-  <div class="movie-card" :style="{ animationDelay: `${delay}ms` }" @click="$emit('detail', movie)">
+  <div class="movie-card h-100" :style="{ animationDelay: `${delay}ms` }" @click="$emit('detail', movie)">
     <div class="poster">
       <img v-if="movie.poster_path" :src="`${imgBase}w500${movie.poster_path}`" :alt="movie.title" class="poster-img" loading="lazy">
       <div v-else class="poster-fallback">🎬</div>

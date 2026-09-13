@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, reactive } from 'vue'
+import { apiFetch } from '@/utils/api'
 
 const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY
 const TMDB_BASE = 'https://api.themoviedb.org/3'
@@ -84,7 +85,7 @@ export const useMovieStore = defineStore('movies', () => {
 
   async function loadRecordIds() {
     try {
-      const res = await fetch('/api/records')
+      const res = await apiFetch('/api/records')
       const data = await res.json()
       recordMovieIds.value = new Set(data.map(r => r.movieId))
     } catch (e) { /* ignore */ }
@@ -162,12 +163,16 @@ export const useMovieStore = defineStore('movies', () => {
   }
 
   async function addToWatchlist(movie) {
+    const movieId = parseInt(movie.id)
     try {
-      await fetch('/api/records', {
+      // 已存在的记录保持原状态，避免把"已看"降级为"想看"
+      const existing = await apiFetch(`/api/records/movie/${movieId}`)
+      if (existing.ok) return
+      await apiFetch('/api/records', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          movieId: parseInt(movie.id),
+          movieId,
           title: movie.title,
           posterPath: movie.poster_path,
           tmdbRating: parseFloat(movie.vote_average) || null,
@@ -176,7 +181,7 @@ export const useMovieStore = defineStore('movies', () => {
           status: 'wishlist',
         }),
       })
-      recordMovieIds.value.add(parseInt(movie.id))
+      recordMovieIds.value.add(movieId)
     } catch (e) {
       console.error('添加失败:', e)
     }

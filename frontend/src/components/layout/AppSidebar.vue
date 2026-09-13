@@ -1,7 +1,9 @@
 <template>
   <aside class="sidebar" :class="{ open: sidebarOpen }">
     <div class="logo">
-      <div class="logo-mark">🎬</div>
+      <div class="logo-mark">
+        <img src="@/assets/logo.svg" alt="菲林日记" class="logo-mark-icon" />
+      </div>
       <div>
         <div class="logo-text">菲林日记</div>
         <div class="logo-sub">Film Diary</div>
@@ -33,7 +35,7 @@
       <div class="user-meta">
         <div class="user-name">{{ authStore.username || '用户' }}</div>
       </div>
-      <button class="nav-item" style="padding:8px 12px;font-size:13px;border:none;background:none;cursor:pointer;color:var(--ink-muted);" @click="authStore.logout()">退出</button>
+      <button type="button" class="logout-btn" @click="authStore.logout()">退出</button>
     </div>
   </aside>
 </template>
@@ -45,3 +47,32 @@ import { useSidebar } from '@/composables/useSidebar'
 const authStore = useAuthStore()
 const { isOpen: sidebarOpen, close: sidebarClose } = useSidebar()
 </script>
+
+<style scoped>
+.logo-mark {
+  overflow: hidden;
+}
+.logo-mark-icon {
+  width: 78%;
+  height: 78%;
+  object-fit: contain;
+  display: block;
+}
+.logout-btn {
+  padding: 7px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--frost-border);
+  background: var(--frost);
+  color: var(--ink-secondary);
+  font-size: 13px;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.logout-btn:hover {
+  background: rgba(220, 53, 69, 0.08);
+  border-color: rgba(220, 53, 69, 0.25);
+  color: #dc3545;
+}
+</style>
